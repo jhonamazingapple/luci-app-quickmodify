@@ -1,18 +1,44 @@
 'use strict';
-'ucode';
-return L.view.extend({
-    render: function() {
-        let m, s, o;
-        m = new form.Map('quickmodify', '全自动一键改机系统', '针对无盘系统优化。');
-        s = m.section(form.TypedSection, 'main', '模式设置');
-        s.anonymous = true;
-        o = s.option(form.Flag, 'diskless', '无盘系统兼容模式');
-        s = m.section(form.NamedSection, 'config', 'quickmodify', '手动操作');
-        o = s.option(form.Button, '_btn', '执行一次随机修改');
-        o.inputstyle = 'apply';
-        o.onclick = function() {
-            return L.resolveDefault(L.get('/usr/bin/quickmod_logic.sh random'), null).then(() => alert('已发送请求'));
-        };
-        return m.render();
-    }
+'require view';
+'require form';
+'require rpc';
+'require ui';
+
+var callRandomize = rpc.declare({
+	object: 'quickmodify',
+	method: 'randomize',
+	expect: { result: false }
+});
+
+return view.extend({
+	render: function() {
+		var m, s, o;
+
+		m = new form.Map(
+			'quickmodify',
+			_('Quick Modify'),
+			_('Randomize hostname and MAC address.')
+		);
+
+		s = m.section(form.NamedSection, 'main', 'main', _('Settings'));
+		s.anonymous = true;
+
+		o = s.option(form.Flag, 'diskless', _('Diskless mode compatibility'));
+		o.rmempty = false;
+
+		s = m.section(form.NamedSection, 'main', 'main', _('Manual Action'));
+		s.anonymous = true;
+
+		o = s.option(form.Button, '_randomize', _('Run random modify once'));
+		o.inputstyle = 'apply';
+		o.onclick = function() {
+			return callRandomize().then(function() {
+				ui.addNotification(null, E('p', _('Random modify executed.')));
+			}).catch(function(err) {
+				ui.addNotification(null, E('p', _('Execution failed: ') + (err ? err.message || err : 'unknown error')));
+			});
+		};
+
+		return m.render();
+	}
 });
