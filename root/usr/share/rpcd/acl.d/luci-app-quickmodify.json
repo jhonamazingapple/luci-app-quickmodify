@@ -1,1 +1,17 @@
-{"luci-app-quickmodify":{"description":"ACL","read":{"uci":["system","network","quickmodify"],"file":{"/usr/bin/quickmod_logic.sh":["read"]}},"write":{"uci":["system","network","quickmodify"]}}}
+{
+  "luci-app-quickmodify": {
+    "description": "Grant access to quickmodify RPC methods",
+    "read": {
+      "ubus": {
+        "quickmodify": [ "randomize" ]
+      },
+      "uci": [ "quickmodify" ]
+    },
+    "write": {
+      "ubus": {
+        "quickmodify": [ "randomize" ]
+      },
+      "uci": [ "quickmodify" ]
+    }
+  }
+}
