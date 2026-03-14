@@ -7,7 +7,7 @@
 var callRandomize = rpc.declare({
 	object: 'quickmodify',
 	method: 'randomize',
-	expect: { result: false }
+	expect: { result: null }
 });
 
 return view.extend({
@@ -32,10 +32,20 @@ return view.extend({
 		o = s.option(form.Button, '_randomize', _('Run random modify once'));
 		o.inputstyle = 'apply';
 		o.onclick = function() {
-			return callRandomize().then(function() {
-				ui.addNotification(null, E('p', _('Random modify executed.')));
+			return callRandomize().then(function(res) {
+				var msg = _('Random modify executed.');
+
+				if (res && res.hostname && res.macaddr) {
+					msg = _('Random modify executed.') + ' ' +
+						_('Hostname: ') + res.hostname + ' | ' +
+						_('MAC: ') + res.macaddr;
+				}
+
+				ui.addNotification(null, E('p', msg));
 			}).catch(function(err) {
-				ui.addNotification(null, E('p', _('Execution failed: ') + (err ? err.message || err : 'unknown error')));
+				ui.addNotification(null, E('p',
+					_('Execution failed: ') + (err ? (err.message || err) : 'unknown error')
+				));
 			});
 		};
 
