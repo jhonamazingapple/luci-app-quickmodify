@@ -1,2 +1,2 @@
 config main 'main'
-    option diskless '0'
+	option diskless '0'
