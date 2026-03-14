@@ -1,0 +1,35 @@
+name: 编译IPK成品
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 准备环境
+        run: sudo apt-get update && sudo apt-get install -y build-essential libncurses5-dev gawk git gettext python3 rsync unzip zlib1g-dev libssl-dev wget file
+
+      - name: 准备SDK
+        run: |
+          git clone --depth 1 -b openwrt-23.05 https://github.com/openwrt/openwrt.git
+          cd openwrt
+          ./scripts/feeds update -a && ./scripts/feeds install -a
+          mkdir -p package/luci-app-quickmodify
+          cp -r ../Makefile ../htdocs ../root package/luci-app-quickmodify/
+
+      - name: 编译
+        run: |
+          cd openwrt
+          echo "CONFIG_PACKAGE_luci-app-quickmodify=y" >> .config
+          make defconfig
+          make package/luci-app-quickmodify/compile V=s -j1
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuickModify_Result
+          path: openwrt/bin/packages/*/base/luci-app-quickmodify*.ipk
