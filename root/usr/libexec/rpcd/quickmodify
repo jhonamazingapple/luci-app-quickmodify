@@ -1,0 +1,31 @@
+#!/bin/sh
+
+case "$1" in
+	list)
+		cat <<'EOF'
+{
+  "randomize": {
+    "call": "randomize"
+  }
+}
+EOF
+	;;
+
+	call)
+		method="$2"
+		case "$method" in
+			randomize)
+				/usr/bin/quickmod_logic.sh random
+				;;
+			*)
+				echo '{"error":"unknown method"}'
+				exit 1
+				;;
+		esac
+	;;
+
+	*)
+		echo "Usage: $0 {list|call <method>}"
+		exit 1
+	;;
+esac
