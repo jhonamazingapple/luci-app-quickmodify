@@ -3,15 +3,23 @@
     "description": "Grant access to quickmodify RPC methods",
     "read": {
       "ubus": {
-        "quickmodify": [ "randomize" ]
+        "quickmodify": [
+          "randomize"
+        ]
       },
-      "uci": [ "quickmodify" ]
+      "uci": [
+        "quickmodify"
+      ]
     },
     "write": {
       "ubus": {
-        "quickmodify": [ "randomize" ]
+        "quickmodify": [
+          "randomize"
+        ]
       },
-      "uci": [ "quickmodify" ]
+      "uci": [
+        "quickmodify"
+      ]
     }
   }
 }
